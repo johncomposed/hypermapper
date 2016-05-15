@@ -1,0 +1,15 @@
+{
+  "name": "Hyperlinker",
+  "version": "0.0.1",
+  "main": "src/index.js",
+  "scripts": {
+    "bin": "./bin/hyperlinker"
+  },
+  "preferGlobal": true,
+  "author": "John Williams",
+  "dependencies": {
+    "cheerio": "^0.20.0",
+    "level": "^1.4.0",
+    "simplecrawler": "^0.6.2"
+  }
+}

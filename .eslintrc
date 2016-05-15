@@ -1,0 +1,20 @@
+{
+  "root": true,
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "rules": {
+    "handle-callback-err": 2,
+    "no-debugger": 2,
+    "no-fallthrough": 2,
+    "eol-last": 1,
+    "no-irregular-whitespace": 2,
+    "no-mixed-spaces-and-tabs": 2,
+    "no-multi-spaces": [0, { "exceptions": { "VariableDeclarator": true } }],
+    "no-new-require": 2,
+    "no-undef": 2,
+    "no-unreachable": 2,
+    "no-unused-vars": [1, { "vars": "all", "args": "none" }]
+  }
+}
