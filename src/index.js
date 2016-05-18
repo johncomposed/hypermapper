@@ -1,8 +1,8 @@
 'use strict';
 const help = [
-  "Example usage: ./bin/hyperlinker cmd config.js", 
+  "Example usage: ./bin/hypermapper cmd config.js", 
   "Where cmd is [crawl] or [viz] and config is your config file",
-  "Note you can also run ./bin/hyperlinker-dev for auto-reloading on save"
+  "Note you can also run ./bin/hypermapper-dev for auto-reloading on save"
 ].join('\n');
 
 if (process.argv.slice(3).length < 1) {

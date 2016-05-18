@@ -9,7 +9,7 @@ const env = process.env.NODE_ENV || "dev";
 
 // open the repl session
 let replServer = repl.start({
-  prompt: "hyperlinker (" + env + ") > ",
+  prompt: "hypermapper (" + env + ") > ",
 });
 
 replServer.context.lo = lo;

@@ -1,9 +1,9 @@
 {
-  "name": "Hyperlinker",
+  "name": "hypermapper",
   "version": "0.0.1",
   "main": "src/index.js",
   "scripts": {
-    "bin": "./bin/hyperlinker"
+    "bin": "./bin/hypermapper"
   },
   "preferGlobal": true,
   "author": "John Williams",
