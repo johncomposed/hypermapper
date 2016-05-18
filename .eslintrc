@@ -7,6 +7,9 @@
   "rules": {
     "handle-callback-err": 2,
     "no-debugger": 2,
+    "indent": [2, 2],
+    "semi": [2, "always"],
+    "semi-spacing": 2,
     "no-fallthrough": 2,
     "eol-last": 1,
     "no-irregular-whitespace": 2,
@@ -15,6 +18,6 @@
     "no-new-require": 2,
     "no-undef": 2,
     "no-unreachable": 2,
-    "no-unused-vars": [1, { "vars": "all", "args": "none" }]
+    # "no-unused-vars": [1, { "vars": "all", "args": "none" }]
   }
 }
