@@ -1,15 +1,13 @@
 'use strict';
 
-const Crawler = require('simplecrawler').Crawler;
-const _ = require('lodash');
-const config = require('./config.js');
+module.exports = function(config, crawl_callback) {
+  const Crawler = require('simplecrawler').Crawler;
+  const _ = require('lodash');
+  
+  const myCrawler = new Crawler(config.domain);
 
-
-module.exports = function(domain, freezer, crawl_callback) {
-  const myCrawler = exports.crawler = new Crawler(domain);
-
-  // Optional defrost
-  if (freezer) { myCrawler.queue.defrost(freezer); }
+  // Defrost if set
+  if (config.defrost) { myCrawler.queue.defrost(config.defrost); }
 
   // Set crawler config
   _.assign(myCrawler, config.crawler);
@@ -20,24 +18,24 @@ module.exports = function(domain, freezer, crawl_callback) {
   // Custom fetch conditions
   _.forEach(config.fetchConditions, (value, key) => myCrawler.addFetchCondition(value));
   
-
-  // TODO: Send some info in the callback
-  myCrawler.on("complete", () => crawl_callback());
+  // Callback on complete
+  myCrawler.on("complete", () => crawl_callback(config.domain));
 
 
   // Start Crawl
   myCrawler.start();
 
 
-  // Graceful shutdown
-  process.on("SIGINT", function() {
-    let freezer = meta.freezer || `./${config.meta.dataDirectory}/frozen_queue_${Date.now()}.json`;
-    
-    myCrawler.queue.freeze(freezer, function() {
-      console.log("Frozen queue to %s", freezer);
-      process.exit();
+  // Freeze before kill
+  if (config.freeze) {
+    process.on("SIGINT", function() {
+      myCrawler.queue.freeze(config.freeze, function() {
+        console.log("Frozen queue to %s", config.freeze);
+        process.exit();
+      });
     });
-  });
+  }
+  
   
   
   

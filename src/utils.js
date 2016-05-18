@@ -1,6 +1,20 @@
 'use strict';
 const url = require('url');
 const _ = require('lodash');
+// const resolve = require('resolve');
+// const path = require('path');
+const levelup = require('level');
+const levelgraph = require("levelgraph");
+
+// Libs
+exports.libs = {
+  lodash: _,
+  cheerio: require('cheerio'),
+  simplecrawler: require('simplecrawler')
+};
+
+// Database
+exports.graphdb = (loc) => levelgraph(levelup(loc || `${__dirname}/tmp/db`));
 
 // Selectors
 exports.select = (() => { 
@@ -49,13 +63,8 @@ exports.filter = (() => {
 })();
 
 // Others
-exports.notEmpty = function (arr) {
-  return arr.length > 0;
-};
-
-exports.hostname = function(link) {
-  return url.parse(link).hostname;
-};
+exports.notEmpty = (arr) => arr.length > 0;
+exports.hostname = (link) => url.parse(link).hostname;
 
 exports.links = function(cheerio_array, cheerio_instance) {
   return cheerio_array.map((i, el) => cheerio_instance(el).attr("href")).get();
@@ -63,17 +72,12 @@ exports.links = function(cheerio_array, cheerio_instance) {
 
 exports.noSub = function(host) {
   var parts = host.split(".");
-  
-  if (parts.length > 2) {
-    parts = parts.slice(1);
-  }
-  
+  if (parts.length > 2) { parts = parts.slice(1); }
   return parts.join('.');
 };
 
 
-// (old) list of the 500 most popular sites on the internet
-// useful for blacklisting to not crawl
+// 500 most popular sites on the internet: useful for blacklisting to not crawl
 exports.alexa500 = [
   "adf.ly",
   "360.com",

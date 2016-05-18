@@ -1,4 +1,6 @@
 node_modules
 tmp
+db
+freezer
 .DS_Store
 npm-debug.log*
