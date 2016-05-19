@@ -1,0 +1,13 @@
+{
+  "name": "hypermapper-advanced-example",
+  "version": "0.1.0",
+  "description": "A more advanced example of configuring your own hypermapper package",
+  "private": true,
+  "scripts": {
+    "crawl": "hypermapper crawl advanced.config.js",
+    "viz": "hypermapper viz advanced.config.js"
+  },
+  "dependencies": {
+    "chalk": "^1.1.3"
+  }
+}
