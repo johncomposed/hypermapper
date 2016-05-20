@@ -1,9 +1,0 @@
-#!/usr/bin/env node
-var src = require('path').join(__dirname, '..', 'src');
-require('nodemon')({
-  watch: [src, process.cwd()],
-  args: process.argv.slice(2),
-  ext: "js",
-  script: src + '/index.js',
-  verbose: true
-});
