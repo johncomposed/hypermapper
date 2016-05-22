@@ -1,43 +1,33 @@
 'use strict';
-const help = [
-  "Example usage: ./bin/hypermapper cmd config.js", 
-  "Where cmd is [crawl] or [viz] and config is your config file",
-  "Note you can also run ./bin/hypermapper-dev for auto-reloading on save"
-].join('\n');
+const args = process.argv.slice(2);
+const cmd = args[0];
 
-if (process.argv.slice(3).length < 1) {
+if (args.length < 2 || cmd !== 'crawl' && cmd !== 'viz') {
   console.log(process.argv);
-  console.error(help);
+  console.error([
+    "Example usage: ./bin/hypermapper cmd config.js", 
+    "Where cmd is [crawl] or [viz] and config is the relative location of your config file"
+  ].join('\n'));
   process.exit();
 }
-const Utils = require('./utils.js');
+
 const Crawl = require('./crawl.js');
 const Viz = require('./viz.js');
-const DefaultConfig = {}; //TODO
+const Gaze = require('gaze').Gaze;
+const configPath = require('path').join(process.cwd(), args[1]);
 
-const resolve = require('resolve');
-const assignIn = require('lodash').assignIn;
-
-const cmd = process.argv[2];
-const configArg = process.argv[3];
-const configFile = resolve.sync('./' + configArg, { basedir: process.cwd() });
-const configFun = require(configFile);
-
-const config = assignIn(DefaultConfig, configFun(Utils, __dirname));
-
-
-if(cmd === 'crawl') {
-  Crawl(config.crawl, (domain) => {
-    console.log("Completed crawling %s!", domain);
-  });
-
-} else if (cmd === 'viz') {
-  Viz(config.viz, (port) => {
-    console.log("Visualization server started on port %s", port);
-  });
-
+if( cmd === 'crawl') {
+  const crawl = new Crawl(configPath);
+  crawl.start();
+  
 } else {
-  console.log("Command %s not found", cmd);
-  console.log(help);
-}
+  const gaze = new Gaze([configPath, `${__dirname}/*.js`]);
+  const viz = new Viz(configPath);
+  viz.start();
+
+  gaze.on('all', function(event, filepath) {
+    console.log('%s has changed, reloading server', filepath);
+    viz.restart();
+  });
+};
  

@@ -1,8 +1,6 @@
 'use strict';
 const url = require('url');
 const _ = require('lodash');
-// const resolve = require('resolve');
-// const path = require('path');
 const levelup = require('level');
 const levelgraph = require("levelgraph");
 
@@ -13,8 +11,13 @@ exports.libs = {
   simplecrawler: require('simplecrawler')
 };
 
-// Database
-exports.graphdb = (loc) => levelgraph(levelup(loc || `${__dirname}/tmp/db`));
+// Database 
+var graphdb = {};
+exports.graphdb = function(loc) { 
+  graphdb = graphdb.isOpen && graphdb.isOpen() ? graphdb : levelgraph(levelup(loc || `${__dirname}/tmp/db`));
+  return graphdb;
+};
+
 
 // Selectors
 exports.select = (() => { 
