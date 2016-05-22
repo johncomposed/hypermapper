@@ -1,45 +1,62 @@
 'use strict';
-module.exports = function(utils, dir) {
-  
-  return {
-    crawl: {
-      crawler: {},
-      on: {
-        "customCrawlerOptions": function() {
-          var crawler = this.crawler || this;
-          if (crawler.onlyHypertext) {
-            crawler.supportedMimeTypes = [/^text\/html/i];
-            crawler.downloadUnsupported = false;
-            crawler.fetchIgnoreRegex = /\.(pdf|css|js|gif|jpg|jpeg|png)$/i;
-          }
-          if (crawler.onlyVisible) {
-            crawler.parseHTMLComments = false;
-            crawler.parseScriptTags = false;
-          }
-          if (crawler.followExternal && crawler.domainBlacklist) {
-            crawler.allowInitialDomainChange = true;
-            crawler.filterByDomain = false;
-            crawler.scanSubdomains = true;
-          }
-        },
-        "domainBlacklist": function(parsedURL, queueItem) {
-          var crawler = this.crawler || this;
-          if (crawler.domainBlacklist) {
-            return !crawler.domainBlacklist.some((bad) => utils.noSub(parsedURL.host) === bad);
-          }
-        },
-        "fetchIgnoreRegex": function(parsedURL, queueItem) {
-          var crawler = this.crawler || this;
-          if (crawler.fetchIgnoreRegex) {
-            return !parsedURL.path.match(crawler.fetchIgnoreRegex);
-          }
-        }
-      },
-      fetchConditions: {}
+const _ = require('lodash');
+const u = require('./utils');
+const path = require('path');
+const defaultConfig = {
+  crawl: {
+    crawler: {},
+    on: {
+      "crawlstart": () => console.log("Started crawler!"),
+      "complete": () => console.log("Crawling complete!")
     },
-    viz: {
-      styles: [],
-      libs: []
-    }
-  };
-}(require('./utils'), __dirname);
+    fetchConditions: {}
+  },
+  viz: {
+    port: 3000,
+    styles: [],
+    scripts: [],
+    customFunctions: [],
+    visjs: require.resolve('vis')
+  }
+};
+
+const extend = module.exports = function(userConfig) {
+  var config =  _.merge(defaultConfig, userConfig);
+
+  // Set custom crawler options
+  if (config.crawl.crawler.onlyHypertext) {
+    config.crawl.crawler.supportedMimeTypes = [/^text\/html/i];
+    config.crawl.crawler.downloadUnsupported = false;
+    config.crawl.crawler.fetchIgnoreRegex = /\.(pdf|css|js|gif|jpg|jpeg|png)$/i;
+  }
+  if (config.crawl.crawler.onlyVisible) {
+    config.crawl.crawler.parseHTMLComments = false;
+    config.crawl.crawler.parseScriptTags = false;
+  }
+  if (config.crawl.crawler.followExternal) {
+    config.crawl.crawler.allowInitialDomainChange = true;
+    config.crawl.crawler.filterByDomain = false;
+    config.crawl.crawler.scanSubdomains = true;
+  }
+  if (config.crawl.crawler.fetchIgnoreRegex) {
+    config.crawl.fetchConditions.fetchIgnoreRegex = function(parsedURL, queueItem) {
+      return !parsedURL.path.match(config.crawl.crawler.fetchIgnoreRegex);
+    };
+  }
+  if (config.crawl.crawler.domainBlacklist) {
+    config.crawl.fetchConditions.domainBlacklist = function(parsedURL, queueItem) {
+      return !config.crawl.crawler.domainBlacklist.some((bad) => u.noSub(parsedURL.host) === bad);
+    };
+  }
+  
+  // Set custom viz option
+  if (config.viz.visjs) {
+    let name = `/${path.basename(config.viz.visjs)}`;
+    config.viz.customFunctions.unshift((app, express) => {
+      app.use(name, express.static(config.viz.visjs));
+    });
+    config.viz.scripts.unshift(name); 
+  }
+  
+  return config;
+};

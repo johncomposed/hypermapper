@@ -2,13 +2,12 @@
 const Crawler = require('simplecrawler').Crawler;
 const _ = require('lodash');
 const u = require('./utils');
-const defaultConfig = require('./config.js');
-
+const c = require('./config.js');
 
 module.exports = class Crawl {
   
   constructor(configPath) {
-    const config = this.config = _.merge(defaultConfig, require(configPath)(u, __dirname)).crawl;
+    const config = this.config = c(require(configPath)(u, __dirname)).crawl;
     const crawler = this.crawler = new Crawler(config.domain);
 
     // Defrost if set
@@ -22,9 +21,6 @@ module.exports = class Crawl {
     
     // Custom fetch conditions
     _.forEach(config.fetchConditions, (value, key) => crawler.addFetchCondition(value));
-
-    // Callback on complete
-    crawler.on("complete", () => console.log("Complete crawling %s!", config.domain));
     
     // Freeze before kill
     if (config.freeze) {
@@ -36,7 +32,6 @@ module.exports = class Crawl {
   }
 
   start() {
-    console.log(this.config);
     this.crawler.start();
   }
   
