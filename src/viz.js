@@ -6,9 +6,9 @@ const c = require('./config.js');
 
 module.exports = class Viz {
   
-  constructor(configPath) {
-    this.configPath = configPath;
-    this.config = c(require(this.configPath)(u, __dirname)).viz;
+  constructor(options) {
+    this.options = options;
+    this.config = options.viz;
 
     this.app = express();
   }
@@ -20,8 +20,7 @@ module.exports = class Viz {
   }
   
   restart() {
-    delete require.cache[this.configPath];
-    this.config = c(require(this.configPath)(u, __dirname)).viz;
+    this.options.reload();
     this.server.close();
     this.start();
     

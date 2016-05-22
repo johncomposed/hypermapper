@@ -6,8 +6,8 @@ const c = require('./config.js');
 
 module.exports = class Crawl {
   
-  constructor(configPath) {
-    const config = this.config = c(require(configPath)(u, __dirname)).crawl;
+  constructor(options) {
+    const config = options.crawl;
     const crawler = this.crawler = new Crawler(config.domain);
 
     // Defrost if set
