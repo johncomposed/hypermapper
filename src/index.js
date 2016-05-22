@@ -10,19 +10,22 @@ if (args.length < 2 || cmd !== 'crawl' && cmd !== 'viz') {
   ].join('\n'));
   process.exit();
 }
-
-const Crawl = require('./crawl.js');
-const Viz = require('./viz.js');
-const Gaze = require('gaze').Gaze;
 const configPath = require('path').join(process.cwd(), args[1]);
 
+const Crawl = require('./crawl');
+const Viz = require('./viz');
+const Gaze = require('gaze').Gaze;
+const Config = require('./config');
+const options = new Config(configPath);
+
+
 if( cmd === 'crawl') {
-  const crawl = new Crawl(configPath);
+  const crawl = new Crawl(options);
   crawl.start();
   
 } else {
   const gaze = new Gaze([configPath, `${__dirname}/*.js`]);
-  const viz = new Viz(configPath);
+  const viz = new Viz(options);
   viz.start();
 
   gaze.on('all', function(event, filepath) {
