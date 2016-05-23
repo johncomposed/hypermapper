@@ -2,9 +2,13 @@
 const _ = require('lodash');
 const u = require('./utils');
 const path = require('path');
+require('coffee-script/register');
+
 const defaultConfig = {
   crawl: {
-    crawler: {},
+    crawler: {
+      timeout: 80000
+    },
     on: {
       "crawlstart": () => console.log("Started crawler!"),
       "complete": () => console.log("Crawling complete!")
